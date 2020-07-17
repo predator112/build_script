@@ -267,6 +267,7 @@ makekernel1 || exit 1
 shipkernel1
 setver2
 setnewcam
+cloneak31
 makekernel1 || exit 1
 shipkernel1
 END=$(date +"%s")
