@@ -21,7 +21,7 @@ COMMIT_POINT="$(git log --pretty=format:'%h : %s' -1)"
 
 # Export custom KBUILD
 export KBUILD_BUILD_USER=builder
-export KBUILD_BUILD_HOST=fiqriardyansyah
+export KBUILD_BUILD_HOST=FiqriArdyansyah
 
 # Export image file
 export KERN_IMG=${OUTDIR}/arch/arm64/boot/Image.gz-dtb
@@ -36,13 +36,13 @@ BUILD_DATE=$(TZ=Asia/Jakarta date +"%Y%m%d-%H%M")
 
 # Kernel revision
 KERNELTYPE=EAS
-KERNELRELEASE=tulip
+KERNELRELEASE=test
 
 # Function to replace defconfig versioning
 setversioning() {
 
     # For staging branch
-    KERNELNAME="${KERNEL}-${KERNELTYPE}-${KERNELRELEASE}-nightly-${BUILD_DATE}"
+    KERNELNAME="${KERNEL}-${KERNELTYPE}-${KERNELRELEASE}-${DEVICE}-nightly-${BUILD_DATE}"
     sed -i "50s/.*/CONFIG_LOCALVERSION=\"-${KERNELNAME}\"/g" arch/arm64/configs/${DEFCONFIG}
 
     # Export our new localversion and zipnames
