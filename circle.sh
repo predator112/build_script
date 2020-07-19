@@ -21,7 +21,7 @@ COMMIT_POINT="$(git log --pretty=format:'%h : %s' -1)"
 
 # Export custom KBUILD
 export KBUILD_BUILD_USER=builder
-export KBUILD_BUILD_HOST=fiqriardyansyah
+export KBUILD_BUILD_HOST=FiqriArdyansyah
 
 # Export image file
 export KERN_IMG=${OUTDIR}/arch/arm64/boot/Image.gz-dtb
@@ -42,7 +42,7 @@ KERNELRELEASE=test
 setversioning() {
 
     # For staging branch
-    KERNELNAME="${KERNEL}-${KERNELTYPE}-${KERNELRELEASE}-nightly-${BUILD_DATE}-oldcam"
+    KERNELNAME="${KERNEL}-${KERNELTYPE}-${KERNELRELEASE}-${DEVICE}-nightly-oldcam-${BUILD_DATE}"
 
     # Export our new localversion and zipnames
     export KERNELTYPE KERNELNAME
@@ -157,7 +157,7 @@ clearout() {
 
 # Setver 2 for newcam
 setver2() {
-    KERNELNAME="${KERNEL}-${VERSION}-${KERNELRELEASE}-nightly-${BUILD_DATE}-NewCam-"
+    KERNELNAME="${KERNEL}-${VERSION}-${KERNELRELEASE}-${DEVICE}-nightly-newcam-${BUILD_DATE}"
     sed -i "50s/.*/CONFIG_LOCALVERSION=\"-${KERNELNAME}\"/g" arch/arm64/configs/${DEFCONFIG}
     export KERNELTYPE KERNELNAME
     export TEMPZIPNAME="${KERNELNAME}-unsigned.zip"
