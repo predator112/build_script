@@ -157,7 +157,7 @@ clearout() {
 
 # Setver 2 for newcam
 setver2() {
-    KERNELNAME="${KERNEL}-${VERSION}-${KERNELRELEASE}-${DEVICE}-nightly-newcam-${BUILD_DATE}"
+    KERNELNAME="${KERNEL}-${KERNELTYPE}-${KERNELRELEASE}-${DEVICE}-nightly-newcam-${BUILD_DATE}"
     sed -i "50s/.*/CONFIG_LOCALVERSION=\"-${KERNELNAME}\"/g" arch/arm64/configs/${DEFCONFIG}
     export KERNELTYPE KERNELNAME
     export TEMPZIPNAME="${KERNELNAME}-unsigned.zip"
