@@ -27,7 +27,7 @@ export KBUILD_BUILD_HOST=FiqriArdyansyah
 export KERN_IMG=${OUTDIR}/arch/arm64/boot/Image.gz-dtb
 
 # Kernel channel
-CI_CHANNEL=-1001466536460
+CI_CHANNEL=-1001460674175
 TG_GROUP=-1001287488921
 
 # Set default local datetime
@@ -36,13 +36,13 @@ BUILD_DATE=$(TZ=Asia/Jakarta date +"%Y%m%d-%H%M")
 
 # Kernel revision
 KERNELTYPE=EAS
-KERNELRELEASE=test
+KERNELRELEASE=stable
 
 # Function to replace defconfig versioning
 setversioning() {
 
     # For staging branch
-    KERNELNAME="${KERNEL}-${KERNELTYPE}-${KERNELRELEASE}-${DEVICE}-nightly-${BUILD_DATE}"
+    KERNELNAME="${KERNEL}-${KERNELTYPE}-${KERNELRELEASE}-${DEVICE}-release-${BUILD_DATE}"
     sed -i "50s/.*/CONFIG_LOCALVERSION=\"-${KERNELNAME}\"/g" arch/arm64/configs/${DEFCONFIG}
 
     # Export our new localversion and zipnames
