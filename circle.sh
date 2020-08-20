@@ -43,7 +43,6 @@ setversioning() {
 
     # For staging branch
     KERNELNAME="${KERNEL}-${KERNELTYPE}-${KERNELRELEASE}-${DEVICE}-nightly-${BUILD_DATE}"
-    sed -i "50s/.*/CONFIG_LOCALVERSION=\"-${KERNELNAME}\"/g" arch/arm64/configs/${DEFCONFIG}
 
     # Export our new localversion and zipnames
     export KERNELTYPE KERNELNAME
