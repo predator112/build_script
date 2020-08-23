@@ -155,8 +155,8 @@ makekernel || exit 1
 shipkernel
 END=$(date +"%s")
 DIFF=$(( END - START ))
-tg_channelcast "Build for ${DEVICE} with ${COMPILER_STRING} <b>succeed</b> took $((DIFF / 60)) minute(s) and $((DIFF % 60)) second(s)!"
-tg_groupcast "Build for ${DEVICE} with ${COMPILER_STRING} <b>succeed</b> took $((DIFF / 60)) minute(s) and $((DIFF % 60)) second(s)! @unknown_name123"
+tg_channelcast "Build for ${DEVICE} <b>succeed</b> took $((DIFF / 60)) minute(s) and $((DIFF % 60)) second(s)!"
+tg_groupcast "Build for ${DEVICE} <b>succeed</b> took $((DIFF / 60)) minute(s) and $((DIFF % 60)) second(s)! @unknown_name123"
 
 rm -rf "${OUTDIR}"
 
@@ -236,5 +236,5 @@ makekernel1 || exit 1
 shipkernel1
 END=$(date +"%s")
 DIFF=$(( END - START ))
-tg_channelcast "Build for ${DEVICE1} with ${COMPILER_STRING} <b>succeed</b> took $((DIFF / 60)) minute(s) and $((DIFF % 60)) second(s)!"
-tg_groupcast "Build for ${DEVICE1} with ${COMPILER_STRING} <b>succeed</b> took $((DIFF / 60)) minute(s) and $((DIFF % 60)) second(s)! @unknown_name123"
+tg_channelcast "Build for ${DEVICE1} <b>succeed</b> took $((DIFF / 60)) minute(s) and $((DIFF % 60)) second(s)!"
+tg_groupcast "Build for ${DEVICE1} <b>succeed</b> took $((DIFF / 60)) minute(s) and $((DIFF % 60)) second(s)! @unknown_name123"
