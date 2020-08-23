@@ -12,12 +12,18 @@ export ANYKERNEL=$(pwd)/anykernel3
 
 # Avoid hardcoding things
 KERNEL=STRIX
-DEFCONFIG=tulip_defconfig
-DEVICE=tulip
 CIPROVIDER=CircleCI
 PARSE_BRANCH="$(git rev-parse --abbrev-ref HEAD)"
 PARSE_ORIGIN="$(git config --get remote.origin.url)"
 COMMIT_POINT="$(git log --pretty=format:'%h : %s' -1)"
+
+# List defconfig each devices
+DEFCONFIG=tulip_defconfig
+DEFCONFIG1=whyred_defconfig
+
+# List each devices
+DEVICE=tulip
+DEVICE1=whyred
 
 # Export custom KBUILD
 export KBUILD_BUILD_USER=builder
@@ -154,8 +160,7 @@ tg_groupcast "Build for ${DEVICE} <b>succeed</b> took $((DIFF / 60)) minute(s) a
 
 rm -rf "${OUTDIR}"
 
-DEFCONFIG1=whyred_defconfig
-DEVICE1=whyred
+echo -e "Start compile for whyred device"
 
 # Function to replace defconfig versioning
 setversioning1() {
