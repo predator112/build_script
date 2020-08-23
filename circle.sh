@@ -20,10 +20,12 @@ COMMIT_POINT="$(git log --pretty=format:'%h : %s' -1)"
 # List defconfig each devices
 DEFCONFIG=tulip_defconfig
 DEFCONFIG1=whyred_defconfig
+DEFCONFIG2=lavender_defconfig
 
 # List each devices
 DEVICE=tulip
 DEVICE1=whyred
+DEVICE2=lavender
 
 # Export custom KBUILD
 export KBUILD_BUILD_USER=builder
@@ -231,3 +233,77 @@ END=$(date +"%s")
 DIFF=$(( END - START ))
 tg_channelcast "Build for ${DEVICE1} <b>succeed</b> took $((DIFF / 60)) minute(s) and $((DIFF % 60)) second(s)!"
 tg_groupcast "Build for ${DEVICE1} <b>succeed</b> took $((DIFF / 60)) minute(s) and $((DIFF % 60)) second(s)! @unknown_name123"
+
+rm -rf "${OUTDIR}"
+
+echo -e "Start compile for lavender device"
+
+# Function to replace defconfig versioning
+setversioning2() {
+
+    # For staging branch
+    KERNELNAME="${KERNEL}-${KERNELTYPE}-${KERNELRELEASE}-${DEVICE2}-nightly-${BUILD_DATE}"
+
+    # Export our new localversion and zipnames
+    export KERNELTYPE KERNELNAME
+    export ZIPNAME="${KERNELNAME}.zip"
+}
+
+# Clone Anykernel3
+cloneak32() {
+    rm -rf anykernel3
+    git clone https://github.com/fiqri19102002/AnyKernel3.git -b lavender-aosp-10 anykernel3
+}
+
+# Make the kernel
+makekernel2() {
+    kernelstringfix
+    export CROSS_COMPILE="${KERNELDIR}/gcc/bin/aarch64-linux-gnu-"
+    export CROSS_COMPILE_ARM32="${KERNELDIR}/gcc32/bin/arm-eabi-"
+    make O=out ARCH=arm64 ${DEFCONFIG2}
+    make -j$(nproc --all) O=out ARCH=arm64
+
+    # Check if compilation is done successfully.
+    if ! [ -f "${OUTDIR}"/arch/arm64/boot/Image.gz-dtb ]; then
+        END=$(date +"%s")
+        DIFF=$(( END - START ))
+        echo -e "Kernel compilation failed, See buildlog to fix errors"
+        tg_channelcast "Build for ${DEVICE2} <b>failed</b> in $((DIFF / 60)) minute(s) and $((DIFF % 60)) second(s)! Check ${CIPROVIDER} for errors!"
+        tg_groupcast "Build for ${DEVICE2} <b>failed</b> in $((DIFF / 60)) minute(s) and $((DIFF % 60)) second(s)! Check ${CIPROVIDER} for errors @unknown_name123 !!!"
+        exit 1
+    fi
+}
+
+# Ship the compiled kernel
+shipkernel2() {
+    # Copy compiled kernel
+    cp "${KERN_IMG}" "${ANYKERNEL}"
+
+    # Zip the kernel, or fail
+    cd "${ANYKERNEL}" || exit
+    zip -r9 "${ZIPNAME}" *
+
+    # Ship it to the CI channel
+    "${TELEGRAM}" -f "$ZIPNAME" -c "${CI_CHANNEL}"
+
+    # Go back for any extra builds
+    cd ..
+}
+
+## Start building the kernel for whyred device ##
+setversioning2
+tg_groupcast "compile started at $(date +%Y%m%d-%H%M)"
+tg_channelcast "Device: ${DEVICE2}" \
+               "Kernel: <code>${KERNEL}, ${KERNELRELEASE}</code>" \
+               "Linux Version: <code>$(make kernelversion)</code>" \
+               "Branch: <code>${PARSE_BRANCH}</code>" \
+               "Latest commit: <code>${COMMIT_POINT}</code>" \
+               "Started at: <b>${BUILD_DATE}</b>"
+START=$(date +"%s")
+cloneak32
+makekernel2 || exit 1
+shipkernel2
+END=$(date +"%s")
+DIFF=$(( END - START ))
+tg_channelcast "Build for ${DEVICE2} <b>succeed</b> took $((DIFF / 60)) minute(s) and $((DIFF % 60)) second(s)!"
+tg_groupcast "Build for ${DEVICE2} <b>succeed</b> took $((DIFF / 60)) minute(s) and $((DIFF % 60)) second(s)! @unknown_name123"
