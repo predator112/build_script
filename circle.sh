@@ -160,8 +160,6 @@ DIFF=$(( END - START ))
 tg_channelcast "Build for ${DEVICE} <b>succeed</b> took $((DIFF / 60)) minute(s) and $((DIFF % 60)) second(s)!"
 tg_groupcast "Build for ${DEVICE} <b>succeed</b> took $((DIFF / 60)) minute(s) and $((DIFF % 60)) second(s)! @unknown_name123"
 
-rm -rf "${OUTDIR}"
-
 echo -e "Start compile for whyred device"
 
 # Function to replace defconfig versioning
@@ -233,8 +231,6 @@ END=$(date +"%s")
 DIFF=$(( END - START ))
 tg_channelcast "Build for ${DEVICE1} <b>succeed</b> took $((DIFF / 60)) minute(s) and $((DIFF % 60)) second(s)!"
 tg_groupcast "Build for ${DEVICE1} <b>succeed</b> took $((DIFF / 60)) minute(s) and $((DIFF % 60)) second(s)! @unknown_name123"
-
-rm -rf "${OUTDIR}"
 
 echo -e "Start compile for lavender device"
 
