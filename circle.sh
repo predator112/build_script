@@ -169,7 +169,7 @@ tg_groupcast "Build for ${DEVICE} <b>succeed</b> took $((DIFF / 60)) minute(s) a
 
 echo -e "Start compile for whyred device"
 
-rm -rf "${OUTDIR}/arch/arm64/boot/ *"
+rm -r "${OUTDIR}/arch/arm64/boot"
 
 # Function to replace defconfig versioning
 setversioning1() {
@@ -250,7 +250,7 @@ tg_groupcast "Build for ${DEVICE1} <b>succeed</b> took $((DIFF / 60)) minute(s) 
 
 echo -e "Start compile for lavender device"
 
-rm -rf "${OUTDIR}/arch/arm64/boot/ *"
+rm -r "${OUTDIR}/arch/arm64/boot"
 
 # Function to replace defconfig versioning
 setversioning2() {
