@@ -14,8 +14,8 @@ KERNELDIR="$(pwd)"
 SCRIPTS=${KERNELDIR}/kernelscripts
 OUTDIR=${KERNELDIR}/out
 
-git clone https://github.com/najahiiii/aarch64-linux-gnu.git -b linaro8-20190402 --depth=1 "${KERNELDIR}/gcc"
-git clone https://github.com/innfinite4evr/android-prebuilts-gcc-linux-x86-arm-arm-eabi-7.2.git -b master --depth=1 "${KERNELDIR}/gcc32"
+git clone https://github.com/arter97/arm64-gcc.git -b master --depth=1 "${KERNELDIR}/gcc"
+git clone https://github.com/arter97/arm32-gcc.git -b master --depth=1 "${KERNELDIR}/gcc32"
 
 export KERNELDIR SCRIPTS OUTDIR
 
