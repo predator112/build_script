@@ -175,7 +175,7 @@ rm -r "${OUTDIR}/arch/arm64/boot"
 setversioning1() {
 
     # For staging branch
-    KERNELNAME="${KERNEL}-${KERNELTYPE}-${KERNELRELEASE}-${DEVICE1}-nightly-${BUILD_DATE}"
+    KERNELNAME="${KERNEL}-${KERNELTYPE}-${KERNELRELEASE}-${DEVICE1}-nightly-oldcam-${BUILD_DATE}"
 
     # Export our new localversion and zipnames
     export KERNELTYPE KERNELNAME
@@ -223,6 +223,28 @@ shipkernel1() {
     cd ..
 }
 
+# Ship China firmware builds
+setnewcam() {
+    export CAMLIBS=NewCam
+    # Pick DSP change
+    sed -i 's/CONFIG_MACH_XIAOMI_NEW_CAMERA=n/CONFIG_MACH_XIAOMI_NEW_CAMERA=y/g' arch/arm64/configs/${DEFCONFIG1}
+    echo -e "Newcam for whyred ready"
+}
+
+# Ship China firmware builds
+clearout() {
+    # Pick DSP change
+    rm -rf out
+    mkdir -p out
+}
+
+# Setver 2 for newcam
+setver2() {
+    KERNELNAME="${KERNEL}-${KERNELTYPE}-${KERNELRELEASE}-${DEVICE1}-nightly-newcam-${BUILD_DATE}"
+    export KERNELTYPE KERNELNAME
+    export ZIPNAME="${KERNELNAME}.zip"
+}
+
 # Fix for CI builds running out of memory
 fixcilto1() {
     sed -i 's/CONFIG_LTO=y/# CONFIG_LTO is not set/g' arch/arm64/configs/${DEFCONFIG1}
@@ -241,6 +263,10 @@ tg_channelcast "Device: ${DEVICE1}" \
                "Started at: <b>${BUILD_DATE}</b>"
 START=$(date +"%s")
 cloneak31
+makekernel1 || exit 1
+shipkernel1
+setver2
+setnewcam
 makekernel1 || exit 1
 shipkernel1
 END=$(date +"%s")
