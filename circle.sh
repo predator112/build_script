@@ -38,7 +38,6 @@ export KERN_IMG=${OUTDIR}/arch/arm64/boot/Image.gz-dtb
 
 # Kernel channel
 CI_CHANNEL=-1001401913520
-TG_GROUP=-1001287488921
 
 # Set default local datetime
 DATE=$(TZ=Asia/Jakarta date +"%Y%m%d-%T")
@@ -66,16 +65,6 @@ tg_channelcast() {
 		for POST in "${@}"; do
 			echo "${POST}"
 		done
-    )"
-}
-
-# Send to main group
-tg_groupcast() {
-    "${TELEGRAM}" -c "${TG_GROUP}" -H \
-    "$(
-        for POST in "${@}"; do
-            echo "${POST}"
-        done
     )"
 }
 
@@ -123,7 +112,6 @@ makekernel() {
 	    DIFF=$(( END - START ))
 	    echo -e "Kernel compilation failed, See buildlog to fix errors"
 	    tg_channelcast "Build for ${DEVICE} <b>failed</b> in $((DIFF / 60)) minute(s) and $((DIFF % 60)) second(s)! Check ${CIPROVIDER} for errors!"
-        tg_groupcast "Build for ${DEVICE} <b>failed</b> in $((DIFF / 60)) minute(s) and $((DIFF % 60)) second(s)! Check ${CIPROVIDER} for errors @unknown_name123 !!!"
 	    exit 1
     fi
 }
@@ -153,7 +141,6 @@ fixcilto() {
 ## Start building the kernel for tulip device ##
 setversioning
 fixcilto
-tg_groupcast "compile started at $(date +%Y%m%d-%H%M)"
 tg_channelcast "Device: ${DEVICE}" \
                "Kernel: <code>${KERNEL}, ${KERNELRELEASE}</code>" \
                "Linux Version: <code>$(make kernelversion)</code>" \
@@ -167,7 +154,6 @@ shipkernel
 END=$(date +"%s")
 DIFF=$(( END - START ))
 tg_channelcast "Build for ${DEVICE} <b>succeed</b> took $((DIFF / 60)) minute(s) and $((DIFF % 60)) second(s)!"
-tg_groupcast "Build for ${DEVICE} <b>succeed</b> took $((DIFF / 60)) minute(s) and $((DIFF % 60)) second(s)! @unknown_name123"
 
 echo -e "Start compile for whyred device"
 
@@ -204,7 +190,6 @@ makekernel1() {
         DIFF=$(( END - START ))
         echo -e "Kernel compilation failed, See buildlog to fix errors"
         tg_channelcast "Build for ${DEVICE1} <b>failed</b> in $((DIFF / 60)) minute(s) and $((DIFF % 60)) second(s)! Check ${CIPROVIDER} for errors!"
-        tg_groupcast "Build for ${DEVICE1} <b>failed</b> in $((DIFF / 60)) minute(s) and $((DIFF % 60)) second(s)! Check ${CIPROVIDER} for errors @unknown_name123 !!!"
         exit 1
     fi
 }
@@ -256,7 +241,6 @@ fixcilto1() {
 ## Start building the kernel for whyred device ##
 setversioning1
 fixcilto1
-tg_groupcast "compile started at $(date +%Y%m%d-%H%M)"
 tg_channelcast "Device: ${DEVICE1}" \
                "Kernel: <code>${KERNEL}, ${KERNELRELEASE}</code>" \
                "Linux Version: <code>$(make kernelversion)</code>" \
@@ -275,4 +259,3 @@ shipkernel1
 END=$(date +"%s")
 DIFF=$(( END - START ))
 tg_channelcast "Build for ${DEVICE1} <b>succeed</b> took $((DIFF / 60)) minute(s) and $((DIFF % 60)) second(s)!"
-tg_groupcast "Build for ${DEVICE1} <b>succeed</b> took $((DIFF / 60)) minute(s) and $((DIFF % 60)) second(s)! @unknown_name123"
