@@ -25,6 +25,10 @@ DEFCONFIG1=whyred_defconfig
 DEVICE=tulip
 DEVICE1=whyred
 
+# List the kernel version of each device
+VERSION=v2.5 # Tulip device
+VERSION1=v2.9 # Whyred device
+
 # Export custom KBUILD
 export KBUILD_BUILD_USER=builder
 export KBUILD_BUILD_HOST=FiqriArdyansyah
@@ -33,7 +37,7 @@ export KBUILD_BUILD_HOST=FiqriArdyansyah
 export KERN_IMG=${OUTDIR}/arch/arm64/boot/Image.gz-dtb
 
 # Kernel channel
-CI_CHANNEL=-1001466536460
+CI_CHANNEL=-1001401913520
 TG_GROUP=-1001287488921
 
 # Set default local datetime
@@ -42,13 +46,13 @@ BUILD_DATE=$(TZ=Asia/Jakarta date +"%Y%m%d-%H%M")
 
 # Kernel revision
 KERNELTYPE=EAS
-KERNELRELEASE=test
+KERNELRELEASE=stable
 
 # Function to replace defconfig versioning
 setversioning() {
 
     # For staging branch
-    KERNELNAME="${KERNEL}-${KERNELTYPE}-${KERNELRELEASE}-${DEVICE}-nightly-${BUILD_DATE}"
+    KERNELNAME="${KERNEL}-${KERNELTYPE}-${DEVICE}-${KERNELRELEASE}-${VERSION}-${BUILD_DATE}"
 
     # Export our new localversion and zipnames
     export KERNELTYPE KERNELNAME
@@ -173,7 +177,7 @@ rm -r "${OUTDIR}/arch/arm64/boot"
 setversioning1() {
 
     # For staging branch
-    KERNELNAME="${KERNEL}-${KERNELTYPE}-${KERNELRELEASE}-${DEVICE1}-nightly-oldcam-${BUILD_DATE}"
+    KERNELNAME="${KERNEL}-${KERNELTYPE}-${DEVICE1}-${KERNELRELEASE}-oldcam-${VERSION1}-${BUILD_DATE}"
 
     # Export our new localversion and zipnames
     export KERNELTYPE KERNELNAME
@@ -238,7 +242,7 @@ clearout() {
 
 # Setver 2 for newcam
 setver2() {
-    KERNELNAME="${KERNEL}-${KERNELTYPE}-${KERNELRELEASE}-${DEVICE1}-nightly-newcam-${BUILD_DATE}"
+    KERNELNAME="${KERNEL}-${KERNELTYPE}-${DEVICE1}-${KERNELRELEASE}-newcam-${VERSION1}-${BUILD_DATE}"
     export KERNELTYPE KERNELNAME
     export ZIPNAME="${KERNELNAME}.zip"
 }
