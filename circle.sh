@@ -101,7 +101,7 @@ cloneak3() {
 # Make the kernel
 makekernel() {
     kernelstringfix
-    export CROSS_COMPILE="${KERNELDIR}/gcc/bin/aarch64-elf-"
+    export CROSS_COMPILE="${KERNELDIR}/gcc/bin/aarch64-linux-gnu-"
     export CROSS_COMPILE_ARM32="${KERNELDIR}/gcc32/bin/arm-eabi-"
     make O=out ARCH=arm64 ${DEFCONFIG}
     make -j$(nproc --all) O=out ARCH=arm64
@@ -172,7 +172,7 @@ cloneak31() {
 # Make the kernel
 makekernel1() {
     kernelstringfix
-    export CROSS_COMPILE="${KERNELDIR}/gcc/bin/aarch64-elf-"
+    export CROSS_COMPILE="${KERNELDIR}/gcc/bin/aarch64-linux-gnu-"
     export CROSS_COMPILE_ARM32="${KERNELDIR}/gcc32/bin/arm-eabi-"
     make O=out ARCH=arm64 ${DEFCONFIG1}
     make -j$(nproc --all) O=out ARCH=arm64
