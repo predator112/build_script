@@ -26,8 +26,8 @@ DEVICE=tulip
 DEVICE1=whyred
 
 # List the kernel version of each device
-VERSION=v2.5 # Tulip device
-VERSION1=v2.9 # Whyred device
+VERSION=v2.6 # Tulip device
+VERSION1=v3.0 # Whyred device
 
 # Export custom KBUILD
 export KBUILD_BUILD_USER=builder
