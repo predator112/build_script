@@ -161,7 +161,7 @@ clone() {
 	fi
 
 	msg "|| Cloning Anykernel for tulip ||"
-	git clone --depth 1 https://github.com/fiqri19102002/AnyKernel3.git -b lineage-17.1-tulip
+	git clone --depth 1 https://github.com/fiqri19102002/AnyKernel3.git -b tulip-aosp-10
 	msg "|| Cloning libufdt ||"
 	git clone https://android.googlesource.com/platform/system/libufdt "$KERNEL_DIR"/scripts/ufdt/libufdt
 }
