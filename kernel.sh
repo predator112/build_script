@@ -36,20 +36,26 @@ err() {
 KERNEL_DIR=$PWD
 
 # The name of the Kernel, to name the ZIP
-ZIPNAME="STRIX"
+KERNEL="STRIX"
 
 # Kernel zip name type
 TYPE="nightly"
 
 # The name of the device for which the kernel is built
 MODEL="Redmi Note 6 Pro"
+MODEL1="Redmi Note 5 Pro"
 
 # The codename of the device
 DEVICE="tulip"
+DEVICE1="whyred"
+
+# Kernel revision
+KERNELTYPE=EAS
 
 # The defconfig which should be used. Get it from config.gz from
 # your device or check source
 DEFCONFIG=tulip_defconfig
+DEFCONFIG1=whyred_defconfig
 
 # Show manufacturer info
 MANUFACTURERINFO="XiaoMI, Inc."
@@ -206,6 +212,17 @@ tg_post_build() {
 
 ##----------------------------------------------------------##
 
+# Function to replace defconfig versioning
+setversioning() {
+    # For staging branch
+    KERNELNAME="$KERNEL-$DEVICE-$KERNELTYPE-$TYPE-$DATE"
+    # Export our new localversion and zipnames
+    export KERNELTYPE KERNELNAME
+    export ZIPNAME="$KERNELNAME.zip"
+}
+
+##--------------------------------------------------------------##
+
 build_kernel() {
 	if [ $INCREMENTAL = 0 ]
 	then
@@ -264,7 +281,6 @@ build_kernel() {
 				python2 "$KERNEL_DIR/scripts/ufdt/libufdt/utils/src/mkdtboimg.py" \
 					create "$KERNEL_DIR/out/arch/arm64/boot/dtbo.img" --page_size=4096 "$KERNEL_DIR/out/arch/arm64/boot/dts/qcom/sm6150-idp-overlay.dtbo"
 			fi
-				gen_zip
 		else
 			if [ "$PTTG" = 1 ]
  			then
@@ -284,10 +300,10 @@ gen_zip() {
 		mv "$KERNEL_DIR"/out/arch/arm64/boot/dtbo.img AnyKernel3/dtbo.img
 	fi
 	cd AnyKernel3 || exit
-	zip -r9 $ZIPNAME-$DEVICE-"$DATE" * -x .git README.md
+	zip -r9 "$ZIPNAME" * -x .git README.md
 
 	## Prepare a final zip variable
-	ZIP_FINAL="$ZIPNAME-$DEVICE-$DATE.zip"
+	ZIP_FINAL="$ZIPNAME"
 
 	if [ "$PTTG" = 1 ]
  	then
@@ -296,13 +312,192 @@ gen_zip() {
 	cd ..
 }
 
+setversioning
 clone
 exports
 build_kernel
+gen_zip
 
 if [ $LOG_DEBUG = "1" ]
 then
 	tg_post_build "error.log" "$CHATID" "Debug Mode Logs"
 fi
 
-##----------------*****-----------------------------##
+##------------------------------------------------------------------##
+
+msg "|| compile for whyred device ||"
+
+rm -r "$KERNEL_DIR/out/arch/arm64/boot"
+
+##----------------------------------------------------------##
+
+# Now Its time for other stuffs like cloning
+cloneak() {
+	rm -rf "$KERNEL_DIR/AnyKernel3"
+	msg "|| Cloning Anykernel for whyred ||"
+	git clone --depth 1 https://github.com/fiqri19102002/AnyKernel3.git -b whyred-aosp
+}
+
+##------------------------------------------------------------------##
+
+build_kernel1() {
+	if [ $INCREMENTAL = 0 ]
+	then
+		msg "|| Cleaning Sources ||"
+		make clean && make mrproper && rm -rf out
+	fi
+
+	if [ "$PTTG" = 1 ]
+ 	then
+		tg_post_msg "<b>$KBUILD_BUILD_VERSION CI Build Triggered</b>%0A<b>Docker OS: </b><code>$DISTRO</code>%0A<b>Kernel Version : </b><code>$KERVER</code>%0A<b>Date : </b><code>$(TZ=Asia/Jakarta date)</code>%0A<b>Device : </b><code>$MODEL1 [$DEVICE1]</code>%0A<b>Manufacturer : </b><code>$MANUFACTURERINFO</code>%0A<b>Pipeline Host : </b><code>$KBUILD_BUILD_HOST</code>%0A<b>Host Core Count : </b><code>$PROCS</code>%0A<b>Compiler Used : </b><code>$KBUILD_COMPILER_STRING</code>%0a<b>Branch : </b><code>$CI_BRANCH</code>%0A<b>Last Commit : </b><code>$COMMIT_HEAD</code>%0A<b>Status : </b>#Nightly" "$CHATID"
+	fi
+
+	make O=out $DEFCONFIG1
+	if [ $DEF_REG = 1 ]
+	then
+		cp .config arch/arm64/configs/$DEFCONFIG1
+		git add arch/arm64/configs/$DEFCONFIG1
+		git commit -m "$DEFCONFIG1: Regenerate
+
+						This is an auto-generated commit"
+	fi
+
+	BUILD_START=$(date +"%s")
+	
+	if [ $COMPILER = "clang" ]
+	then
+		MAKE+=(
+			CROSS_COMPILE=aarch64-linux-gnu- \
+			CROSS_COMPILE_ARM32=arm-linux-gnueabi- \
+			CC=clang \
+			AR=llvm-ar \
+			OBJDUMP=llvm-objdump \
+			STRIP=llvm-strip
+		)
+	fi
+	
+	if [ $SILENCE = "1" ]
+	then
+		MAKE+=( -s )
+	fi
+
+	msg "|| Started Compilation ||"
+	export CROSS_COMPILE_ARM32=$GCC32_DIR/bin/arm-eabi-
+	make -j"$PROCS" O=out CROSS_COMPILE=aarch64-elf-
+
+		BUILD_END=$(date +"%s")
+		DIFF=$((BUILD_END - BUILD_START))
+
+		if [ -f "$KERNEL_DIR"/out/arch/arm64/boot/Image.gz ] 
+	    then
+	    	msg "|| Kernel successfully compiled ||"
+	    	if [ $BUILD_DTBO = 1 ]
+			then
+				msg "|| Building DTBO ||"
+				tg_post_msg "<code>Building DTBO..</code>" "$CHATID"
+				python2 "$KERNEL_DIR/scripts/ufdt/libufdt/utils/src/mkdtboimg.py" \
+					create "$KERNEL_DIR/out/arch/arm64/boot/dtbo.img" --page_size=4096 "$KERNEL_DIR/out/arch/arm64/boot/dts/qcom/sm6150-idp-overlay.dtbo"
+			fi
+		else
+			if [ "$PTTG" = 1 ]
+ 			then
+				tg_post_build "error.log" "$CHATID" "<b>Build failed to compile after $((DIFF / 60)) minute(s) and $((DIFF % 60)) seconds</b>"
+			fi
+		fi
+	
+}
+
+##--------------------------------------------------------------##
+
+# Function to replace defconfig versioning
+setversioning1() {
+    # For staging branch
+    KERNELNAME1="$KERNEL-$DEVICE1-$KERNELTYPE-$TYPE-oldcam-$DATE"
+    # Export our new localversion and zipnames
+    export KERNELTYPE KERNELNAME1
+    export ZIPNAME1="$KERNELNAME1.zip"
+}
+
+##--------------------------------------------------------------##
+
+gen_zip1() {
+	msg "|| Zipping into a flashable zip ||"
+	mv "$KERNEL_DIR"/out/arch/arm64/boot/Image.gz AnyKernel3/kernel/Image.gz
+	if [ $BUILD_DTBO = 1 ]
+	then
+		mv "$KERNEL_DIR"/out/arch/arm64/boot/dtbo.img AnyKernel3/dtbo.img
+	fi
+	cd AnyKernel3 || exit
+	zip -r9 "$ZIPNAME1" * -x .git README.md
+
+	## Prepare a final zip variable
+	ZIP_FINAL="$ZIPNAME1"
+
+	if [ "$PTTG" = 1 ]
+ 	then
+		tg_post_build "$ZIP_FINAL" "$CHATID" "Build took : $((DIFF / 60)) minute(s) and $((DIFF % 60)) second(s)"
+	fi
+	cd ..
+}
+
+##--------------------------------------------------------------##
+
+# Ship China firmware builds
+setnewcam() {
+    export CAMLIBS=NewCam
+    # Pick DSP change
+    sed -i 's/CONFIG_MACH_XIAOMI_NEW_CAMERA=n/CONFIG_MACH_XIAOMI_NEW_CAMERA=y/g' arch/arm64/configs/$DEFCONFIG1
+    msg "|| Newcam for whyred ready ||"
+}
+
+# Ship China firmware builds
+clearout() {
+    # Pick DSP change
+    rm -rf out
+    mkdir -p out
+}
+
+# Setver 2 for newcam
+setversioning2() {
+	KERNELNAME2="$KERNEL-$DEVICE1-$KERNELTYPE-$TYPE-newcam-$DATE"
+    export KERNELTYPE KERNELNAME2
+    export ZIPNAME2="$KERNELNAME2.zip"
+}
+
+gen_zip2() {
+	msg "|| Zipping into a flashable zip ||"
+	mv "$KERNEL_DIR"/out/arch/arm64/boot/Image.gz AnyKernel3/kernel/Image.gz
+	if [ $BUILD_DTBO = 1 ]
+	then
+		mv "$KERNEL_DIR"/out/arch/arm64/boot/dtbo.img AnyKernel3/dtbo.img
+	fi
+	cd AnyKernel3 || exit
+	zip -r9 "$ZIPNAME2" * -x .git README.md
+
+	## Prepare a final zip variable
+	ZIP_FINAL="$ZIPNAME2"
+
+	if [ "$PTTG" = 1 ]
+ 	then
+		tg_post_build "$ZIP_FINAL" "$CHATID" "Build took : $((DIFF / 60)) minute(s) and $((DIFF % 60)) second(s)"
+	fi
+	cd ..
+}
+
+setversioning1
+cloneak
+exports
+build_kernel1
+gen_zip1
+setversioning2
+setnewcam
+cloneak
+build_kernel1
+gen_zip2
+
+if [ $LOG_DEBUG = "1" ]
+then
+	tg_post_build "error.log" "$CHATID" "Debug Mode Logs"
+fi
+
+##------------------------------------------------------------------##
