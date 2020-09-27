@@ -275,7 +275,7 @@ build_kernel() {
 		BUILD_END=$(date +"%s")
 		DIFF=$((BUILD_END - BUILD_START))
 
-		if [ -f "$KERNEL_DIR"/out/arch/arm64/boot/Image.gz ] 
+		if [ -f "$KERNEL_DIR"/out/arch/arm64/boot/Image.gz-dtb ] 
 	    then
 	    	msg "|| Kernel successfully compiled ||"
 	    	if [ $BUILD_DTBO = 1 ]
@@ -298,7 +298,7 @@ build_kernel() {
 
 gen_zip() {
 	msg "|| Zipping into a flashable zip ||"
-	mv "$KERNEL_DIR"/out/arch/arm64/boot/Image.gz AnyKernel3/kernel/Image.gz
+	mv "$KERNEL_DIR"/out/arch/arm64/boot/Image.gz-dtb AnyKernel3/Image.gz-dtb
 	if [ $BUILD_DTBO = 1 ]
 	then
 		mv "$KERNEL_DIR"/out/arch/arm64/boot/dtbo.img AnyKernel3/dtbo.img
@@ -392,7 +392,7 @@ build_kernel1() {
 		BUILD_END=$(date +"%s")
 		DIFF=$((BUILD_END - BUILD_START))
 
-		if [ -f "$KERNEL_DIR"/out/arch/arm64/boot/Image.gz ] 
+		if [ -f "$KERNEL_DIR"/out/arch/arm64/boot/Image.gz-dtb ] 
 	    then
 	    	msg "|| Kernel successfully compiled ||"
 	    	if [ $BUILD_DTBO = 1 ]
@@ -426,7 +426,7 @@ setversioning1() {
 
 gen_zip1() {
 	msg "|| Zipping into a flashable zip ||"
-	mv "$KERNEL_DIR"/out/arch/arm64/boot/Image.gz AnyKernel3/kernel/Image.gz
+	mv "$KERNEL_DIR"/out/arch/arm64/boot/Image.gz-dtb AnyKernel3/Image.gz-dtb
 	if [ $BUILD_DTBO = 1 ]
 	then
 		mv "$KERNEL_DIR"/out/arch/arm64/boot/dtbo.img AnyKernel3/dtbo.img
@@ -470,7 +470,7 @@ setversioning2() {
 
 gen_zip2() {
 	msg "|| Zipping into a flashable zip ||"
-	mv "$KERNEL_DIR"/out/arch/arm64/boot/Image.gz AnyKernel3/kernel/Image.gz
+	mv "$KERNEL_DIR"/out/arch/arm64/boot/Image.gz-dtb AnyKernel3/Image.gz-dtb
 	if [ $BUILD_DTBO = 1 ]
 	then
 		mv "$KERNEL_DIR"/out/arch/arm64/boot/dtbo.img AnyKernel3/dtbo.img
